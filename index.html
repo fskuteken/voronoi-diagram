@@ -21,23 +21,15 @@
       <canvas id="canvas"></canvas>
 
       <div>
-        <div>
-          <label>
-            Number of points
-            <input id="numberOfPoints" type="number" min="2" max="40" value="20">
-          </label>
-        </div>
+        <a href="https://en.wikipedia.org/wiki/Voronoi_diagram">Voronoi diagram - Wikipedia</a>
       </div>
-
-      <a href="https://en.wikipedia.org/wiki/Voronoi_diagram">Voronoi diagram - Wikipedia</a>
     </div>
     <script>
       const radius = 250
       const width = 2 * radius
       const height = 2 * radius
+      const numberOfPoints = 18
 
-      const numberOfPointsInput = document.querySelector('#numberOfPoints')
-      const generateButton = document.querySelector('#generate')
       const canvas = document.querySelector('#canvas')
       const ctx = canvas.getContext('2d')
       canvas.width = width
@@ -50,8 +42,6 @@
       generate()
 
       function generate () {
-        const numberOfPoints = Math.min(parseInt(numberOfPointsInput.value), 40)
-
         const [points, colors] = generatePointsAndColors(numberOfPoints)
 
         renderVoronoiDiagram(ctx, points, colors)
