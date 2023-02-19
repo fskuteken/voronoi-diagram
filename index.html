@@ -27,7 +27,6 @@
             <input id="numberOfPoints" type="number" min="2" max="40" value="20">
           </label>
         </div>
-        <button id="generate">Generate</button>
       </div>
 
       <a href="https://en.wikipedia.org/wiki/Voronoi_diagram">Voronoi diagram - Wikipedia</a>
@@ -44,7 +43,7 @@
       canvas.width = width
       canvas.height = height
 
-      generateButton.addEventListener('click', () => {
+      canvas.addEventListener('click', () => {
         generate()
       })
 
