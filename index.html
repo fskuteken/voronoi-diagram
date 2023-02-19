@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Voronoi diagram generator</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      body {
+        background-color: #fafafa;
+      }
+
+      .container {
+        text-align: center;
+        margin: 12px auto;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <canvas id="canvas"></canvas>
+
+      <div>
+        <div>
+          <label>
+            Number of points
+            <input id="numberOfPoints" type="number" min="2" max="40" value="20">
+          </label>
+        </div>
+        <button id="generate">Generate</button>
+      </div>
+
+      <a href="https://en.wikipedia.org/wiki/Voronoi_diagram">Voronoi diagram - Wikipedia</a>
+    </div>
+    <script>
+      const width = 500
+      const height = 500
+
+      const numberOfPointsInput = document.querySelector('#numberOfPoints')
+      const generateButton = document.querySelector('#generate')
+      const canvas = document.querySelector('#canvas')
+      const ctx = canvas.getContext('2d')
+      canvas.width = width
+      canvas.height = height
+
+      generateButton.addEventListener('click', () => {
+        generate()
+      })
+
+      generate()
+
+      function generate () {
+        const numberOfPoints = Math.min(parseInt(numberOfPointsInput.value), 40)
+
+        const [points, colors] = generatePointsAndColors(numberOfPoints)
+
+        renderVoronoiDiagram(ctx, points, colors)
+      }
+
+
+      function generatePointsAndColors (numberOfPoints) {
+        const points = []
+        const colors = []
+
+        for (let i = 0; i < numberOfPoints; i++) {
+          const x = Math.round(Math.random() * width)
+          const y = Math.round(Math.random() * width)
+          const r = Math.floor(Math.random() * 256)
+          const g = Math.floor(Math.random() * 256)
+          const b = Math.floor(Math.random() * 256)
+
+          points.push({ x, y })
+          colors.push({ r, g, b })
+        }
+
+        return [points, colors]
+      }
+
+      function getClosestIndex (point, points) {
+        const { x, y } = point
+        let smallestDistance = Number.MAX_VALUE
+        let closestIndex = 0
+
+        points.forEach((point, index) => {
+          const distX = point.x - x
+          const distY = point.y - y
+          const dist = distX * distX + distY * distY
+
+          if (dist < smallestDistance) {
+            smallestDistance = dist
+            closestIndex = index
+          }
+        })
+
+        return closestIndex
+      }
+
+      function renderVoronoiDiagram (ctx, points, colors) {
+        const imageData = ctx.createImageData(width, height)
+
+        for (let x = 0; x < width; x++) {
+          for (let y = 0; y < height; y++) {
+            const closestIndex = getClosestIndex({ x, y }, points)
+            const color = colors[closestIndex]
+            const imageDataIndex = 4 * (x + width * y)
+
+            imageData.data[imageDataIndex] = color.r
+            imageData.data[imageDataIndex + 1] = color.g
+            imageData.data[imageDataIndex + 2] = color.b
+            imageData.data[imageDataIndex + 3] = 255
+          }
+        }
+
+        ctx.putImageData(imageData, 0, 0)
+
+        points.forEach(({ x, y }) => {
+          ctx?.fillRect(x - 2, y - 2, 4, 4)
+        })
+      }
+
+    </script>
+  </body>
+</html>
