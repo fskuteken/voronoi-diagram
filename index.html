@@ -33,8 +33,9 @@
       <a href="https://en.wikipedia.org/wiki/Voronoi_diagram">Voronoi diagram - Wikipedia</a>
     </div>
     <script>
-      const width = 500
-      const height = 500
+      const radius = 250
+      const width = 2 * radius
+      const height = 2 * radius
 
       const numberOfPointsInput = document.querySelector('#numberOfPoints')
       const generateButton = document.querySelector('#generate')
@@ -63,8 +64,12 @@
         const colors = []
 
         for (let i = 0; i < numberOfPoints; i++) {
-          const x = Math.round(Math.random() * width)
-          const y = Math.round(Math.random() * width)
+          const l = radius * Math.sqrt(Math.random())
+          const t = Math.random() * 2 * Math.PI
+
+          const x = width / 2 + l * Math.cos(t)
+          const y = height / 2 + l * Math.sin(t)
+
           const r = Math.floor(Math.random() * 256)
           const g = Math.floor(Math.random() * 256)
           const b = Math.floor(Math.random() * 256)
@@ -95,11 +100,26 @@
         return closestIndex
       }
 
+      function distance (p1, p2) {
+        const distX = p1.x - p2.x
+        const distY = p1.y - p2.y
+
+        return Math.sqrt(distX * distX + distY * distY)
+      }
+
       function renderVoronoiDiagram (ctx, points, colors) {
         const imageData = ctx.createImageData(width, height)
+        const radius = width / 2
+        const center = { x: width / 2, y: height / 2 }
 
         for (let x = 0; x < width; x++) {
           for (let y = 0; y < height; y++) {
+            const distToCenter = distance(center, { x, y })
+
+            if (distToCenter > radius) {
+              continue
+            }
+
             const closestIndex = getClosestIndex({ x, y }, points)
             const color = colors[closestIndex]
             const imageDataIndex = 4 * (x + width * y)
